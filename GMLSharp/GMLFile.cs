@@ -7,6 +7,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Text;
 
 namespace GMLSharp;
 
@@ -40,5 +41,23 @@ public class GMLFile : Node {
 	public override Node Clone() {
 		throw new NotImplementedException();
 	}
+
+	public override void Format(StringBuilder builder, int indentation, bool isInline) {
+		foreach (Comment comment in this.LeadingComments)
+			comment.Format(builder, indentation, false);
+
+		if (this.LeadingComments.Count > 0)
+			builder.Append('\n');
+
+		this.MainClass.Format(builder, indentation, false);
+
+		if (this.TrailingComments.Count > 0)
+			builder.Append('\n');
+
+		foreach (Comment comment in this.TrailingComments)
+			comment.Format(builder, indentation, false);
+	}
 }
+
+
 

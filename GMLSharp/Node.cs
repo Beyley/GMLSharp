@@ -23,7 +23,9 @@ public abstract class Node {
 		return builder.ToString();
 	}
 
-	public virtual void Format(StringBuilder builder, int indentation, bool isInline) {}
+	public virtual void Format(StringBuilder builder, int indentation, bool isInline) {
+		throw new Exception();
+	}
 
 	public static void Indent(StringBuilder builder, int indentationLevel) {
 		for (int i = 0; i < indentationLevel; i++)
@@ -73,7 +75,7 @@ public class KeyValuePair : Node {
 		if (!isInline)
 			Indent(builder, indentation);
 
-		builder.Append(this.Key);
+		builder.Append($"{this.Key}: ");
 		this.Value.Format(builder, indentation, true);
 
 		if (!isInline)
@@ -135,7 +137,7 @@ public class Object : ValueNode {
 		if (child is not KeyValuePair && child is not Comment)
 			throw new ArgumentException("Sub object child must be an object or comment", nameof (child));
 
-		this.SubObjects.Add(child.Clone());
+		this.Properties.Add(child.Clone());
 	}
 
 	private void ForEachProperty(Action<string, JsonValueNode> callback) {
@@ -177,6 +179,37 @@ public class Object : ValueNode {
 				if (property.Key == propertyName)
 					return property.Value;
 		return null;
+	}
+
+	public override void Format(StringBuilder builder, int indentation, bool isInline) {
+		if (!isInline)
+			Indent(builder, indentation);
+		builder.Append('@');
+		builder.Append(this.Name);
+		builder.Append(" {");
+		if (this.Properties.Count > 0 || this.SubObjects.Count > 0) {
+			builder.Append('\n');
+
+			foreach (Node? property in this.Properties)
+				property.Format(builder, indentation + 1, false);
+
+			if (this.Properties.Count > 0 && this.SubObjects.Count > 0)
+				builder.Append("\n");
+
+			// This loop is necessary as we need to know what the last child is.
+			for (int i = 0; i < this.SubObjects.Count; ++i) {
+				Node? child = this.SubObjects[i];
+				child.Format(builder, indentation + 1, false);
+
+				if (child is Object && i != this.SubObjects.Count - 1)
+					builder.Append('\n');
+			}
+
+			Indent(builder, indentation);
+		}
+		builder.Append('}');
+		if (!isInline)
+			builder.Append('\n');
 	}
 
 	public override Node Clone() {

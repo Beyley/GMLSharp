@@ -78,7 +78,7 @@ public class Parser {
 					if (Peek() == TokenType.ClassMarker)
 						value = ParseGmlObject(tokens);
 					else if (Peek() == TokenType.JsonValue)
-						value = new JsonValueNode(tokens.Dequeue().View); //TODO: big todo here
+						value = new JsonValueNode(tokens.Dequeue().View);
 
 					KeyValuePair property = new KeyValuePair(propertyName.View, value ?? throw new NullReferenceException("Value must not be null!"));
 					@object.AddPropertyChild(property);

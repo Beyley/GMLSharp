@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: BSD-2-Clause
  */
 
+using System.Text;
 using GMLSharp;
 using KeyValuePair = GMLSharp.KeyValuePair;
 using Object = GMLSharp.Object;
@@ -93,5 +94,11 @@ public static class Program {
 		}
 
 		PrintObject(file.MainClass, 0);
+		
+		StringBuilder builder = new StringBuilder();
+		
+		file.Format(builder, 0, false);
+		
+		Console.WriteLine($"Formatted: \n{builder.ToString()}");
 	}
 }
