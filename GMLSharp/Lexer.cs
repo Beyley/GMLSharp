@@ -93,9 +93,9 @@ public class Lexer {
 		}
 
 		while (this._index < this._input.Length) {
-			if (this.Peek() == ' ') {
+			if (char.IsWhiteSpace(this.Peek())) {
 				BeginToken();
-				while (this.Peek() == ' ')
+				while (char.IsWhiteSpace(this.Peek()))
 					this.Consume();
 				continue;
 			}
@@ -142,7 +142,7 @@ public class Lexer {
 				this.Consume();
 				CommitToken(TokenType.Colon);
 
-				while (this.Peek() == ' ')
+				while (char.IsWhiteSpace(this.Peek()))
 					this.Consume();
 
 				if (this.Peek() == '@') {

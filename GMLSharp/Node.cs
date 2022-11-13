@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using Newtonsoft.Json;
 
 namespace GMLSharp;
 
@@ -77,10 +78,10 @@ public class KeyValuePair : Node {
 }
 
 public class JsonValueNode : ValueNode {
-	public JsonValue Value;
+	public object? Value;
 
 	public JsonValueNode(string value) {
-		throw new NotImplementedException("Json Values are not implemented!");
+		this.Value = JsonConvert.DeserializeObject(value); 
 	}
 	
 	private JsonValueNode(JsonValue value) {
@@ -88,7 +89,7 @@ public class JsonValueNode : ValueNode {
 	}
 
 	public override Node Clone() {
-		return new JsonValueNode(this.Value);
+		return new JsonValueNode(JsonConvert.SerializeObject(this.Value));
 	}
 
 	public override void Format(StringBuilder builder, int indentation, bool is_inline) {
@@ -111,6 +112,10 @@ public class JsonValueNode : ValueNode {
 		// }
 		// if (!is_inline)
 		// 	builder.append('\n');
+	}
+
+	public override string ToString() {
+		return JsonConvert.SerializeObject(this.Value);
 	}
 }
 
@@ -136,7 +141,7 @@ public class Object : ValueNode {
 	}
 
 	public void AddPropertyChild(Node child) {
-		if (child is not Object && child is not Comment)
+		if (child is not KeyValuePair && child is not Comment)
 			throw new ArgumentException("Sub object child must be an object or comment", nameof (child));
 
 		this.SubObjects.Add(child.Clone());
@@ -189,5 +194,9 @@ public class Object : ValueNode {
 
 	public override Node Clone() {
 		return new Object(this.Name, this.Properties, this.SubObjects);
+	}
+
+	public override string ToString() {
+		return this.Name;
 	}
 }
