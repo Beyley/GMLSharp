@@ -1,8 +1,7 @@
 ﻿using GMLSharp;
 
 public static class Program {
-	public static void Main(string[] args) {
-		Lexer lexer = new Lexer(@"// A 20x200 coolbar button with text.
+    public static string GML = @"// A 20x200 coolbar button with text.
 @GUI::Button {
     width: 200
     height: 20
@@ -24,12 +23,10 @@ public static class Program {
         title: ""Tab 2""
         text: ""This is the second tab. What did you expect?""
     }
-}");
-        
-        lexer.Lex();
-        
-        foreach (Lexer.Token token in lexer.Tokens) {
-            Console.WriteLine(token);
-        }
-	}
+}";
+	public static void Main(string[] args) {
+        Parser parser = new Parser();
+
+        GMLFile file = parser.Parse(GML);
+    }
 }

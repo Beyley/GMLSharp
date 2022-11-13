@@ -3,47 +3,25 @@ using System.Diagnostics;
 
 namespace GMLSharp;
 
+public enum TokenType {
+	Unknown,
+	Comment,
+	ClassMarker,
+	ClassName,
+	LeftCurly,
+	RightCurly,
+	Identifier,
+	Colon,
+	JsonValue
+}
+
 public class Lexer {
-	public struct Position {
-		public int Line;
-		public int Column;
-	}
-
-	public enum TokenType {
-		Unknown,
-		Comment,
-		ClassMarker,
-		ClassName,
-		LeftCurly,
-		RightCurly,
-		Identifier,
-		Colon,
-		JsonValue
-	}
-
-	public struct Token {
-		public TokenType Type = TokenType.Unknown;
-		public string    View;
-		public Position  Start;
-		public Position  End;
-
-		public override string ToString() {
-			return this.Type.ToString();
-		}
-
-		public Token() {
-			this.View  = "";
-			this.Start = new Position();
-			this.End   = new Position();
-		}
-	}
-
 	private readonly string _input;
+
+	public readonly List<Token> Tokens;
 
 	private int      _index;
 	private Position _position;
-
-	public readonly List<Token> Tokens;
 
 	public Lexer(string input) {
 		this._input = input.Replace("\r\n", "\n");
@@ -62,7 +40,7 @@ public class Lexer {
 		Debug.Assert(this._index < this._input.Length);
 
 		char ch = this._input[this._index++];
-		
+
 		if (ch == '\n') {
 			this._position.Line++;
 			this._position.Column = 0;
@@ -88,7 +66,7 @@ public class Lexer {
 
 	public void Lex() {
 		int      tokenStartIndex    = 0;
-		Position tokenStartPosition = new();
+		Position tokenStartPosition = new Position();
 
 		void BeginToken() {
 			tokenStartIndex    = this._index;
@@ -183,4 +161,27 @@ public class Lexer {
 			CommitToken(TokenType.Unknown);
 		}
 	}
+
+	public struct Position {
+		public int Line;
+		public int Column;
+	}
+
+	public struct Token {
+		public TokenType Type = TokenType.Unknown;
+		public string    View;
+		public Position  Start;
+		public Position  End;
+
+		public override string ToString() {
+			return this.Type.ToString();
+		}
+
+		public Token() {
+			this.View  = "";
+			this.Start = new Position();
+			this.End   = new Position();
+		}
+	}
 }
+
