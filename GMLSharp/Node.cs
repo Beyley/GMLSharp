@@ -1,3 +1,10 @@
+/*
+ * Copyright (c) 2022, kleines Filmröllchen <filmroellchen@serenityos.org>.
+ * Copyright (c) 2022, Beyley Thomas <ep1cm1n10n123@gmail.com>.
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
 #nullable enable
 using System;
 using System.Collections.Generic;
@@ -84,10 +91,6 @@ public class JsonValueNode : ValueNode {
 		this.Value = JsonConvert.DeserializeObject(value); 
 	}
 	
-	private JsonValueNode(JsonValue value) {
-		this.Value = value;
-	}
-
 	public override Node Clone() {
 		return new JsonValueNode(JsonConvert.SerializeObject(this.Value));
 	}

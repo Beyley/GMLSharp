@@ -1,4 +1,11 @@
-﻿using System.Collections.Generic;
+﻿/*
+ * Copyright (c) 2020, Andreas Kling <kling@serenityos.org>
+ * Copyright (c) 2022, Beyley Thomas <ep1cm1n10n123@gmail.com>
+ *
+ * SPDX-License-Identifier: BSD-2-Clause
+ */
+
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace GMLSharp;
