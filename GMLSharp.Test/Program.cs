@@ -66,20 +66,20 @@ public static class Program {
 
         GMLFile file = parser.Parse(GML);
         
-        void PrintObject(Object obj, int indentation) {
+        void PrintObject(Object obj, int indentation, string tack = "") {
             Console.Write(new string(' ', 4 * indentation));
-            Console.WriteLine($"Object Name: {obj.Name}");
+            Console.WriteLine($"{tack}{obj.Name}");
  
             foreach (Node subObjs in obj.SubObjects) {
-                Console.Write(new string(' ', 4 * (indentation + 1)));
-            
                 if(subObjs is Object subsubObject)
                     PrintObject(subsubObject, indentation + 1);
                 else if (subObjs is KeyValuePair pair) {
                     if (pair.Value is Object subsubsubObject) {
-                        PrintObject(subsubsubObject, indentation + 1);
+                        PrintObject(subsubsubObject, indentation + 1, pair.Key + ": ");
                     }
                     else {
+                        Console.Write(new string(' ', 4 * (indentation + 1)));
+                        
                         Console.WriteLine($"{pair.Key}:{pair.Value}");
                     }
                 }
