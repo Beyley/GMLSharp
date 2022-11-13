@@ -88,33 +88,21 @@ public class JsonValueNode : ValueNode {
 	public object? Value;
 
 	public JsonValueNode(string value) {
-		this.Value = JsonConvert.DeserializeObject(value); 
+		this.Value = JsonConvert.DeserializeObject(value);
 	}
-	
+
 	public override Node Clone() {
 		return new JsonValueNode(JsonConvert.SerializeObject(this.Value));
 	}
 
-	public override void Format(StringBuilder builder, int indentation, bool is_inline) {
-		// if (!is_inline)
-		// 	Indent(builder, indentation);
-		// if (this.Value.Type == JsonValueType.Array) {
-		// 	// custom array serialization as AK's doesn't pretty-print
-		// 	// objects and arrays (we only care about arrays (for now))
-		// 	builder.Append('[');
-		// 	bool first = true;
-		// 	foreach (JsonValue value in this.Value.Value.Array) {
-		// 		if (!first)
-		// 			builder.Append(", ");
-		// 		first = false;
-		// 		value.Serialize(builder);	
-		// 	}
-		// 	builder.append(']');
-		// } else {
-		// 	serialize(builder);
-		// }
-		// if (!is_inline)
-		// 	builder.append('\n');
+	public override void Format(StringBuilder builder, int indentation, bool isInline) {
+		if (!isInline)
+			Indent(builder, indentation);
+
+		builder.Append(JsonConvert.SerializeObject(this.Value));
+
+		if (!isInline)
+			builder.Append('\n');
 	}
 
 	public override string ToString() {
@@ -150,21 +138,21 @@ public class Object : ValueNode {
 		this.SubObjects.Add(child.Clone());
 	}
 
-	private void for_each_property(Action<string, JsonValueNode> callback) {
+	private void ForEachProperty(Action<string, JsonValueNode> callback) {
 		foreach (Node child in this.Properties)
 			if (child is KeyValuePair property)
 				if (property.Key != "layout" && property.Value is JsonValueNode jsonValueNode)
 					callback(property.Key, jsonValueNode);
 	}
 
-	private void for_each_child_object(Action<Object> callback) {
+	private void ForEachChildObject(Action<Object> callback) {
 		foreach (Node child in this.SubObjects)
 			// doesn't capture layout as intended, as that's behind a kv-pair
 			if (child is Object @object)
 				callback(@object);
 	}
 
-	private void for_each_child_object_interruptible(Func<Object, IterationDecision> callback) {
+	private void ForEachChildObjectInterruptible(Func<Object, IterationDecision> callback) {
 		foreach (Node child in this.SubObjects)
 			// doesn't capture layout as intended, as that's behind a kv-pair
 			if (child is Object @object)
@@ -172,26 +160,22 @@ public class Object : ValueNode {
 					return;
 	}
 
-	Object? layout_object() {
-		foreach (Node child in this.Properties) {
-			if (child is KeyValuePair property) {
+	private Object? LayoutObject() {
+		foreach (Node child in this.Properties)
+			if (child is KeyValuePair property)
 				if (property.Key == "layout") {
 					// VERIFY(is<Object >(property->value().ptr()));
 					Debug.Assert(property.Value is Object);
 					return (Object)property.Value;
 				}
-			}
-		}
 		return null;
 	}
 
-	ValueNode? get_property(string property_name) {
-		foreach (Node child in this.Properties) {
-			if (child is KeyValuePair property) {
-				if (property.Key == property_name)
+	private ValueNode? GetProperty(string propertyName) {
+		foreach (Node child in this.Properties)
+			if (child is KeyValuePair property)
+				if (property.Key == propertyName)
 					return property.Value;
-			}
-		}
 		return null;
 	}
 
@@ -203,3 +187,4 @@ public class Object : ValueNode {
 		return this.Name;
 	}
 }
+

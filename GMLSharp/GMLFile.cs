@@ -15,8 +15,8 @@ public class GMLFile : Node {
 	public Object        MainClass;
 	public List<Comment> TrailingComments = new List<Comment>();
 
-	public void add_child(Node child) {
-		if (!has_main_class()) {
+	public void AddChild(Node child) {
+		if (!this.HasMainClass()) {
 			if (child is Comment comment) {
 				this.LeadingComments.Add(comment);
 				return;
@@ -33,9 +33,12 @@ public class GMLFile : Node {
 		this.TrailingComments.Add(trailingComment);
 	}
 
-	public bool has_main_class() => this.MainClass != null;
+	public bool HasMainClass() {
+		return this.MainClass != null;
+	}
 
 	public override Node Clone() {
 		throw new NotImplementedException();
 	}
 }
+

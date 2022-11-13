@@ -9,7 +9,7 @@ using KeyValuePair = GMLSharp.KeyValuePair;
 using Object = GMLSharp.Object;
 
 public static class Program {
-    public static string GML = @"
+	public static string GML = @"
 @GUI::Widget {
     fixed_width: 260
     fixed_height: 85
@@ -68,31 +68,30 @@ public static class Program {
     }
 }";
 	public static void Main(string[] args) {
-        Parser parser = new Parser();
+		Parser parser = new Parser();
 
-        GMLFile file = parser.Parse(GML);
-        
-        void PrintObject(Object obj, int indentation, string tack = "") {
-            Console.Write(new string(' ', 4 * indentation));
-            Console.WriteLine($"{tack}{obj.Name}");
- 
-            foreach (Node subObjs in obj.SubObjects) {
-                if(subObjs is Object subsubObject)
-                    PrintObject(subsubObject, indentation + 1);
-                else if (subObjs is KeyValuePair pair) {
-                    if (pair.Value is Object subsubsubObject) {
-                        PrintObject(subsubsubObject, indentation + 1, pair.Key + ": ");
-                    }
-                    else {
-                        Console.Write(new string(' ', 4 * (indentation + 1)));
-                        
-                        Console.WriteLine($"{pair.Key}:{pair.Value}");
-                    }
-                }
-                
-            } 
-        }
-        
-        PrintObject(file.MainClass, 0);
-    }
+		GMLFile file = parser.Parse(GML);
+
+		void PrintObject(Object obj, int indentation, string tack = "") {
+			Console.Write(new string(' ', 4 * indentation));
+			Console.WriteLine($"{tack}{obj.Name}");
+
+			foreach (Node subObjs in obj.SubObjects)
+				if (subObjs is Object subsubObject) {
+					PrintObject(subsubObject, indentation + 1);
+				}
+				else if (subObjs is KeyValuePair pair) {
+					if (pair.Value is Object subsubsubObject) {
+						PrintObject(subsubsubObject, indentation + 1, pair.Key + ": ");
+					}
+					else {
+						Console.Write(new string(' ', 4 * (indentation + 1)));
+
+						Console.WriteLine($"{pair.Key}:{pair.Value}");
+					}
+				}
+		}
+
+		PrintObject(file.MainClass, 0);
+	}
 }
